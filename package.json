@@ -1,0 +1,13 @@
+{
+  "name": "restful-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:aspire-t/restful-api.git",
+  "author": "aspire-t <zhijianwubu@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "koa": "^2.11.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0"
+  }
+}
