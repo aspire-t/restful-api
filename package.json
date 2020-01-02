@@ -3,14 +3,20 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "supervisor app"
+    "start": "cross-env NODE_ENV=production node app",
+    "dev": "supervisor app"
   },
   "repository": "git@github.com:aspire-t/restful-api.git",
   "author": "aspire-t <zhijianwubu@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@types/koa-json-error": "^3.1.2",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.2.1",
+    "koa-json-error": "^3.1.2",
     "koa-router": "^7.4.0"
+  },
+  "devDependencies": {
+    "cross-env": "^6.0.3"
   }
 }
