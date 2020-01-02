@@ -2,6 +2,9 @@
   "name": "restful-api",
   "version": "1.0.0",
   "main": "index.js",
+  "scripts": {
+    "start": "supervisor app"
+  },
   "repository": "git@github.com:aspire-t/restful-api.git",
   "author": "aspire-t <zhijianwubu@gmail.com>",
   "license": "MIT",
