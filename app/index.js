@@ -2,9 +2,18 @@ const Koa = require('koa')
 const bodyparser = require('koa-bodyparser')
 const error = require('koa-json-error')
 const parameter = require('koa-parameter')
-const app = new Koa()
-const routing = require('./routes')
+const mongoose = require('mongoose')
 
+const routing = require('./routes')
+const { dbs } = require('./config')
+
+mongoose.connect(dbs, {
+  useNewUrlParser: true
+}, () => console.log('mongodb link success'))
+
+mongoose.connection.on('error', console.error)
+
+const app = new Koa()
 // // 模拟编写错误处理中间件
 // // 但是这样捕捉不到404错误，但能捕捉到自动抛出的信息
 // app.use(async (ctx, next) => {

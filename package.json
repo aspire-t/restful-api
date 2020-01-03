@@ -1,7 +1,7 @@
 {
   "name": "restful-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app/index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node app",
     "dev": "supervisor app"
@@ -15,7 +15,8 @@
     "koa-bodyparser": "^4.2.1",
     "koa-json-error": "^3.1.2",
     "koa-parameter": "^3.0.1",
-    "koa-router": "^7.4.0"
+    "koa-router": "^7.4.0",
+    "mongoose": "^5.8.4"
   },
   "devDependencies": {
     "cross-env": "^6.0.3"
