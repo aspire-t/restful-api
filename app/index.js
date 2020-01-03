@@ -8,9 +8,9 @@ const routing = require('./routes')
 const { dbs } = require('./config')
 
 mongoose.connect(dbs, {
-  useNewUrlParser: true
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 }, () => console.log('mongodb link success'))
-
 mongoose.connection.on('error', console.error)
 
 const app = new Koa()
