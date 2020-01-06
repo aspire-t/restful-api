@@ -1,11 +1,11 @@
 const Router = require('koa-router')
 const router = new Router()
 // const jwt = require('jsonwebtoken')
-const jwt = require('koa-jwt')
+const koaJwt = require('koa-jwt')
 const { find, findById, create, update, delete: del, login, checkOwner } = require('../controllers/users')
 const { secret } = require('../config')
 
-const auth = jwt({ secret })// 这一行，就是下面代码实现的功能
+const auth = koaJwt({ secret })// 这一行，就是下面代码实现的功能
 // 手写koa认证的中间件
 // const auth = async (ctx, next) => {
 //   const { authorization = '' } = ctx.request.header
