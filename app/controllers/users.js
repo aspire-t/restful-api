@@ -8,7 +8,12 @@ class UsersController {
   }
 
   async findById (ctx) {
-    const user = await User.findById(ctx.params.id)
+    const { fields } = ctx.query
+    // .filter(f => f) 过滤空字符串  针对的这种查询字符串localhost:3000/users/5e130604ee65b901000f65e9?fields=;
+    const selectFields = fields.split(';').filter(f => f).map(item => ' +' + item).join('')
+    // mongoose 默认支持这种加select的方式，查询别的字段
+    // const user = await User.findById(ctx.params.id).select('+educations+business')
+    const user = await User.findById(ctx.params.id).select(selectFields)
     if (!user) {
       ctx.throw(404, '用户不存在')
     }
@@ -44,6 +49,13 @@ class UsersController {
     ctx.verifyParams({
       name: { type: 'string', required: false },
       password: { type: 'string', required: false },
+      avatar_url: { type: 'string', required: false },
+      gender: { type: 'string', required: false },
+      headline: { type: 'string', required: false },
+      locations: { type: 'array', itemType: 'string', required: false },// itemType 表示数组里面每一项的类型
+      business: { type: 'string', required: false },
+      employments: { type: 'array', itemType: 'object', required: false },
+      educations: { type: 'array', itemType: 'object', required: false },
     })
     const user = await User.findByIdAndUpdate(ctx.params.id, ctx.request.body)
     if (!user) {
