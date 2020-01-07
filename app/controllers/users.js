@@ -3,6 +3,22 @@ const jwt = require('jsonwebtoken')
 const { secret } = require('../config')
 
 class UsersController {
+  // 权限校验（中间件）
+  async checkOwner (ctx, next) {
+    if (ctx.params.id !== ctx.state.user._id) {
+      // 403 未授权
+      ctx.throw(403, '没有权限')
+    }
+    await next()
+  }
+
+  // 权限校验中间件
+  async checkUserExist (ctx, next) {
+    const user = await User.findById(ctx.params.id)
+    if (!user) ctx.throw(404, '用户不存在')
+    await next()
+  }
+
   async find (ctx) {
     ctx.body = await User.find()
   }
@@ -35,14 +51,6 @@ class UsersController {
 
     const user = await new User(ctx.request.body).save()
     ctx.body = user
-  }
-  // 权限校验（中间件）
-  async checkOwner (ctx, next) {
-    if (ctx.params.id !== ctx.state.user._id) {
-      // 403 未授权
-      ctx.throw(403, '没有权限')
-    }
-    await next()
   }
 
   async update (ctx) {
@@ -86,6 +94,42 @@ class UsersController {
     const token = jwt.sign({ _id, name }, secret, { expiresIn: 3600 })
     ctx.body = { token }
   }
+
+  async listFollowing (ctx) {
+    const user = await User.findById(ctx.params.id).select('+following').populate('following') // populate('following') 获取返回用户的具体信息，否则只有id
+    if (!user) ctx.throw(404)
+    ctx.body = user.following
+  }
+
+  // 获取粉丝列表
+  async listFollowers (ctx) {
+    const users = await User.find({ following: ctx.params.id })
+    ctx.body = users
+  }
+
+  // 关注一个人
+  async follow (ctx) {
+    const me = await User.findById(ctx.state.user._id).select('+following')
+    console.log(me.following) // 这个返回的是mongoose的一种类型，需要转换一下
+    if (!me.following.map(id => id.toString()).includes(ctx.params.id)) {
+      me.following.push(ctx.params.id)
+      me.save()
+    }
+    ctx.status = 204
+  }
+  // 取消关注
+  async unFollow (ctx) {
+    const me = await User.findById(ctx.state.user._id).select('+following')
+    const index = me.following.map(id => id.toString()).indexOf(ctx.params.id)
+    if (index > -1) {
+      me.following.splice(index, 1)
+      me.save()
+    }
+    ctx.status = 204
+  }
+
+
+
 }
 
 module.exports = new UsersController()

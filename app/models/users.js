@@ -28,6 +28,10 @@ const userSchema = new Schema({
     }],
     select: false
   },
+  following: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'User' }],// 这个ref的值'User'，作用，这个Schema和model的User是相对应的
+    select: false
+  }
 })
 
 module.exports = model('User', userSchema) 
