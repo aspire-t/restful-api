@@ -2,7 +2,8 @@ const Router = require('koa-router')
 const router = new Router()
 // const jwt = require('jsonwebtoken')
 const koaJwt = require('koa-jwt')
-const { find, findById, create, update, delete: del, login, checkOwner, checkUserExist, listFollowing, follow, unFollow, listFollowers } = require('../controllers/users')
+const { find, findById, create, update, delete: del, login, checkOwner, checkUserExist, listFollowing, follow, unFollow, listFollowers, listFollowingTopics, followTopics, unFollowTopics } = require('../controllers/users')
+const { checkTopicExist } = require('../controllers/topics')
 const { secret } = require('../config')
 
 const auth = koaJwt({ secret })// 这一行，就是下面代码实现的功能
@@ -44,5 +45,11 @@ router.get('/:id/followers', listFollowers)
 router.put('/following/:id', auth, checkUserExist, follow)
 
 router.delete('/following/:id', auth, checkUserExist, unFollow)
+
+router.get('/:id/followingTopics', listFollowingTopics)
+
+router.put('/followingTopics/:id', auth, checkTopicExist, followTopics)
+
+router.delete('/followingTopics/:id', auth, checkTopicExist, unFollowTopics)
 
 module.exports = router

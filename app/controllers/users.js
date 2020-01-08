@@ -20,16 +20,30 @@ class UsersController {
   }
 
   async find (ctx) {
-    ctx.body = await User.find()
+    const { per_page = 10 } = ctx.query
+    const page = Math.max(ctx.query.page - 0, 1) - 1//第几页
+    const perPage = Math.max(per_page - 0, 1)// 每页显示的个数
+    ctx.body = await User
+      .find({ name: new RegExp(ctx.query.q) })
+      .limit(perPage).skip(page * perPage)
   }
 
   async findById (ctx) {
     const { fields = '' } = ctx.query
     // .filter(f => f) 过滤空字符串  针对的这种查询字符串localhost:3000/users/5e130604ee65b901000f65e9?fields=;
     const selectFields = fields.split(';').filter(f => f).map(item => ' +' + item).join('')
+    const populateField = fields.split(';').filter(f => f).map(f => {
+      if (f === 'employments') {
+        return 'employments.company employments.job'
+      }
+      if (f === 'educations') {
+        return 'educations.school educations.major'
+      }
+      return f
+    }).join(' ')
     // mongoose 默认支持这种加select的方式，查询别的字段
     // const user = await User.findById(ctx.params.id).select('+educations+business')
-    const user = await User.findById(ctx.params.id).select(selectFields)
+    const user = await User.findById(ctx.params.id).select(selectFields).populate(populateField)
     if (!user) {
       ctx.throw(404, '用户不存在')
     }
@@ -97,7 +111,7 @@ class UsersController {
 
   async listFollowing (ctx) {
     const user = await User.findById(ctx.params.id).select('+following').populate('following') // populate('following') 获取返回用户的具体信息，否则只有id
-    if (!user) ctx.throw(404)
+    if (!user) ctx.throw(404, '用户不存在')
     ctx.body = user.following
   }
 
@@ -128,8 +142,32 @@ class UsersController {
     ctx.status = 204
   }
 
+  // 关注话题
+  async followTopics (ctx) {
+    const me = await User.findById(ctx.state.user._id).select('+followingTopics')
+    if (!me.followingTopics.map(id => id.toString()).includes(ctx.params.id)) {
+      me.followingTopics.push(ctx.params.id)
+      me.save()
+    }
+    ctx.status = 204
+  }
+  // 取消关注话题
+  async unFollowTopics (ctx) {
+    const me = await User.findById(ctx.state.user._id).select('+followingTopics')
+    const index = me.followingTopics.map(id => id.toString()).indexOf(ctx.params.id)
+    if (index > -1) {
+      me.followingTopics.splice(index, 1)
+      me.save()
+    }
+    ctx.status = 204
+  }
 
-
+  // 获取关注的话题
+  async listFollowingTopics (ctx) {
+    const user = await User.findById(ctx.params.id).select('+followingTopics').populate('followingTopics') // populate('following') 获取返回用户的具体信息，否则只有id
+    if (!user) ctx.throw(404, '用户不存在')
+    ctx.body = user.followingTopics
+  }
 }
 
 module.exports = new UsersController()
