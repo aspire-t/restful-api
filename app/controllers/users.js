@@ -1,4 +1,5 @@
 const User = require('../models/users')
+const Questions = require('../models/questions')
 const jwt = require('jsonwebtoken')
 const { secret } = require('../config')
 
@@ -167,6 +168,11 @@ class UsersController {
     const user = await User.findById(ctx.params.id).select('+followingTopics').populate('followingTopics') // populate('following') 获取返回用户的具体信息，否则只有id
     if (!user) ctx.throw(404, '用户不存在')
     ctx.body = user.followingTopics
+  }
+
+  async listQuestions (ctx) {
+    const questions = await Questions.find({ questioner: ctx.params.id })
+    ctx.body = questions
   }
 }
 
