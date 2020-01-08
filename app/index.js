@@ -11,7 +11,8 @@ const { dbs } = require('./config')
 
 mongoose.connect(dbs, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useFindAndModify: false
 }, () => console.log('mongodb link success'))
 mongoose.connection.on('error', console.error)
 

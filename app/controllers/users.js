@@ -24,7 +24,7 @@ class UsersController {
   }
 
   async findById (ctx) {
-    const { fields } = ctx.query
+    const { fields = '' } = ctx.query
     // .filter(f => f) 过滤空字符串  针对的这种查询字符串localhost:3000/users/5e130604ee65b901000f65e9?fields=;
     const selectFields = fields.split(';').filter(f => f).map(item => ' +' + item).join('')
     // mongoose 默认支持这种加select的方式，查询别的字段
