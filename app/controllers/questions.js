@@ -12,7 +12,6 @@ class QuestionsController {
   // 验证是否是同一个人的中间件 
   async checkQuestioner (ctx, next) {
     const { question } = ctx.state
-    console.log(ctx.state.user);
     if (question.questioner.toString() !== ctx.state.user._id) ctx.throw(403, '没有权限')
     await next()
   }
