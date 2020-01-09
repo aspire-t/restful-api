@@ -33,7 +33,15 @@ const userSchema = new Schema({
     select: false
   },
   followingTopics: {
-    type: [{ type: Schema.Types.ObjectId, ref: 'Topic' }],// 这个ref的值'User'，作用，这个Schema和model的User是相对应的
+    type: [{ type: Schema.Types.ObjectId, ref: 'Topic' }],
+    select: false
+  },
+  likingAnswers: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'Answer' }],
+    select: false
+  },
+  dislikingAnswers: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'Answer' }],
     select: false
   }
 })

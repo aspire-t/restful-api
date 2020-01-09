@@ -2,8 +2,9 @@ const Router = require('koa-router')
 const router = new Router()
 // const jwt = require('jsonwebtoken')
 const koaJwt = require('koa-jwt')
-const { find, findById, create, update, delete: del, login, checkOwner, checkUserExist, listFollowing, follow, unFollow, listFollowers, listFollowingTopics, followTopics, unFollowTopics, listQuestions } = require('../controllers/users')
+const { find, findById, create, update, delete: del, login, checkOwner, checkUserExist, listFollowing, follow, unFollow, listFollowers, listFollowingTopics, followTopics, unFollowTopics, listQuestions, likeAnswer, unlikeAnswer, listLikingAnswers, dislikeAnswer, unDislikeAnswer, listDislikingAnswers } = require('../controllers/users')
 const { checkTopicExist } = require('../controllers/topics')
+const { checkAnswerExist } = require('../controllers/answers')
 const { secret } = require('../config')
 
 const auth = koaJwt({ secret })// 这一行，就是下面代码实现的功能
@@ -11,7 +12,6 @@ const auth = koaJwt({ secret })// 这一行，就是下面代码实现的功能
 // const auth = async (ctx, next) => {
 //   const { authorization = '' } = ctx.request.header
 //   const token = authorization.replace('Bearer ', '')
-
 //   try {
 //     const user = jwt.verify(token, secret)
 //     ctx.state.user = user
@@ -19,7 +19,6 @@ const auth = koaJwt({ secret })// 这一行，就是下面代码实现的功能
 //     // 401 未认证
 //     ctx.throw(401, error.message)
 //   }
-
 //   await next()
 // }
 
@@ -53,5 +52,17 @@ router.put('/followingTopics/:id', auth, checkTopicExist, followTopics)
 router.delete('/followingTopics/:id', auth, checkTopicExist, unFollowTopics)
 
 router.get('/:id/questions', listQuestions)
+
+router.get('/:id/likingAnswers', listLikingAnswers)
+
+router.put('/likingAnswers/:id', auth, checkAnswerExist, likeAnswer, unDislikeAnswer)
+
+router.delete('/likingAnswers/:id', auth, checkAnswerExist, unlikeAnswer)
+
+router.get('/:id/dislikingAnswers', listDislikingAnswers)
+
+router.put('/dislikingAnswers/:id', auth, checkAnswerExist, dislikeAnswer, unlikeAnswer)
+
+router.delete('/dislikingAnswers/:id', auth, checkAnswerExist, unDislikeAnswer)
 
 module.exports = router

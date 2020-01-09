@@ -5,7 +5,8 @@ class AnswerController {
   async checkAnswerExist (ctx, next) {
     const answer = await Answer.findById(ctx.params.id).select('+answerer')
     if (!answer) ctx.throw(404, '答案不存在')
-    if (answer.questionId !== ctx.params.questionId) ctx.throw(404, '该问题下没有此答案')
+    // 只有在删改查答案的时候才检查此逻辑，赞、踩答案时候，不检查
+    if (ctx.params.questionId && answer.questionId !== ctx.params.questionId) ctx.throw(404, '该问题下没有此答案')
     ctx.state.answer = answer
     await next()
   }
